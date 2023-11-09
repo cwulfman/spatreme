@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, HTMLResponse
@@ -9,7 +10,19 @@ from typing import Optional
 from app.kb import Kb, QueryResult
 from app.forms import TranslationForm
 
+class SpatremError(Exception):
+    """Spatrem error of some kind"""
+    pass
 
+
+#endpoint = "http://147.182.188.37:7200/repositories/spatrem"
+endpoint = os.getenv("SPARQL_ENDPOINT")
+
+if not endpoint:
+    raise SpatremError("SPARQL_ENDPOINT not set")
+
+
+# set additional environment variables from run-time environment
 current_file = Path(__file__)
 current_file_dir = current_file.parent
 project_root = current_file_dir
@@ -17,7 +30,9 @@ project_root_absolute = project_root.resolve()
 static_root_absolute = project_root_absolute / "static"
 template_root_absolute = project_root_absolute / "templates"
 
-endpoint = "http://147.182.188.37:7200/repositories/spatrem"
+
+
+
 
 kb = Kb(endpoint)
 
