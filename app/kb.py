@@ -289,7 +289,7 @@ select distinct * where {
         if kwargs["after_date"] and kwargs['after_date'] != 'any':
             q += f"FILTER(xsd:integer(?pubDate) > {kwargs['after_date']})\n"
 
-        if kwargs["before_date"] and kwargs['after_date'] != 'any':
+        if kwargs["before_date"] and kwargs['before_date'] != 'any':
             q += f"FILTER(xsd:integer(?pubDate) < {kwargs['before_date']})\n"
 
 
