@@ -383,6 +383,14 @@ SELECT distinct ?label ?birthDate  ?deathDate ?gender ?nationality ?language_are
                  "nationality" : infodata.get('nationality'),
                  "language_area" : infodata.get('language_area')
         }
+        if info.get('birthDate') is None:
+            info['birthDate'] = '?'
+
+        if info.get('deathDate') is None:
+            info['deathDate'] = '?'
+
+        if info.get('nationality') is None:
+            info['nationality'] = 'unknown'
 
             
         
