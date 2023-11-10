@@ -30,9 +30,6 @@ static_root_absolute = project_root_absolute / "static"
 template_root_absolute = project_root_absolute / "templates"
 
 
-
-
-
 kb = Kb(endpoint)
 
 app: FastAPI = FastAPI()
@@ -56,27 +53,9 @@ async def get_languages(request: Request):
 
 
 @app.post("/translations", response_class=HTMLResponse)
-# async def post_translations(request: Request,
-#                             page: int = 1,
-#                             page_size: int = 10,
-#                            # sl: Optional[str] = None,
-#                             sl: Optional[str] = Form(...)
-#                             tl: Optional[str] = None,
-#                             genre: Optional[str] = None,
-#                             after_date: Optional[int] = None,
-#                             before_date: Optional[int] = None,
-#                             magazine: Optional[str] = None):
 async def post_translations(request: Request):
     form_data = await request.form()
     form: TranslationForm = await TranslationForm.from_formdata(request)
-
-    # filters = { "sl": form.sl.data,
-    #             "tl": form.tl.data,
-    #             "genre": form.genre.data,
-    #             "after_date": form.after_date.data,
-    #             "before_date": form.before_date.data,
-    #             "magazine": form.magazine.data,
-    #     }
 
     filters = { "sl": form_data.get('sl'),
                 "tl": form_data.get('tl'),
@@ -86,7 +65,6 @@ async def post_translations(request: Request):
                 "magazine": form_data.get('magazine'),
                }
 
-    # result: QueryResult = kb.translations(page, page_size, filters)
     result: QueryResult = kb.translations(1, 10, filters)
 
     form_data = {
@@ -118,15 +96,6 @@ async def post_translations(request: Request):
     form.before_date.choices = form_data['date_choices']
     form.before_date.data = filters['before_date']
 
-    # current_page = page
-    # prev_page = page - 1
-    # if prev_page < 0:
-    #     prev_page = None
-
-    # if result.count < page_size:
-    #     next_page = None
-    # else:
-    #     next_page = page + 1
     current_page = 1
     next_page = 2
     prev_page = None
@@ -139,7 +108,6 @@ async def post_translations(request: Request):
                                         "next_page": next_page,
                                         "prev_page": prev_page,
                                         "page_size": page_size,
-                                        "filters": filters,
                                         "translations" : result.data })
 
 
@@ -157,15 +125,6 @@ async def get_translations(request: Request,
     form_data = await request.form()
     form: TranslationForm = await TranslationForm.from_formdata(request)
 
-
-    # filters = { "sl": form.sl.data,
-    #             "tl": form.tl.data,
-    #             "genre": form.genre.data,
-    #             "after_date": form.after_date.data,
-    #             "before_date": form.before_date.data,
-    #             "magazine": form.magazine.data,
-    #     }
-
     filters = { "sl": sl,
                 "tl": tl,
                 "genre": genre,
@@ -175,14 +134,6 @@ async def get_translations(request: Request,
         }
 
     
-
-    # filters = { "sl": form_data.get('sl'),
-    #             "tl": form_data.get('tl'),
-    #             "genre": form_data.get('genre'),
-    #             "after_date": form_data.get('after_date'),
-    #             "before_date":form_data.get('before_date'),
-    #             "magazine": form_data.get('magazine'),
-    #            }
     result: QueryResult = kb.translations(page, page_size, filters)
     form_data = {
         "lang_choices" : [(item['lang'], item['label']) for item in kb.languages().data],
@@ -232,74 +183,8 @@ async def get_translations(request: Request,
                                         "next_page": next_page,
                                         "prev_page": prev_page,
                                         "page_size": page_size,
-                                        "filters": filters,
                                         "translations" : result.data })
 
-
-
-
-
-# @app.get("/translations", response_class=HTMLResponse)
-# async def get_translations(request: Request,
-#                            page: int = 1,
-#                            page_size: int = 10,
-#                            sl: Optional[str] = None,
-#                            tl: Optional[str] = None,
-#                            genre: Optional[str] = None,
-#                            after_date: Optional[int] = None,
-#                            before_date: Optional[int] = None,
-#                            magazine: Optional[str] = None):
-
-#     form_data = await request.form()
-#     filters = { "sl": form_data.get('sl'),
-#                 "tl": form_data.get('tl'),
-#                 "genre": form_data.get('genre'),
-#                 "after_date": form_data.get('after_date'),
-#                 "before_date":form_data.get('before_date'),
-#                 "magazine": form_data.get('magazine'),
-#                }
-
-
-#     form_data = {
-#         "lang_choices" : [(item['lang'], item['label']) for item in kb.languages().data],
-#         "magazine_choices": [(item['magazine'], item['label']) for item in kb.magazines().data],
-#         "date_choices": [(item['date'], item['date']) for item in kb.dates().data],
-#         "genre_choices" : [(item['genre'], item['genre']) for item in kb.genres().data]
-#         }
-
-#     for _,v in form_data.items():
-#         v.insert(0, ('any', 'any'))
-
-#     form = TranslationForm(form)
-#     request.genre.choices = form_data['genre_choices']
-#     form.sl.choices = form_data['lang_choices']
-#     form.tl.choices = form_data['lang_choices']
-#     form .magazine.choices = form_data['magazine_choices']
-#     form.after_date.choices = form_data['date_choices']
-#     form.before_date.choices = form_data['date_choices']
-
-#     result: QueryResult = kb.translations(page, page_size, filters)
-
-
-#     current_page = page
-#     prev_page = page - 1
-#     if prev_page < 0:
-#         prev_page = None
-
-#     if result.count < page_size:
-#         next_page = None
-#     else:
-#         next_page = page + 1
-#     data = result.data
-
-#     return templates.TemplateResponse("translations.html",
-#                                       { "request": request,
-#                                         "form": form,
-#                                         "current_page": current_page,
-#                                         "next_page": next_page,
-#                                         "prev_page": prev_page,
-#                                         "page_size": page_size,
-#                                         "translations" : result.data })
 
 
 @app.get("/translators", response_class=HTMLResponse)
