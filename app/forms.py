@@ -12,8 +12,8 @@ class TranslationForm(StarletteForm):
     sortby = SelectField("Sort by", default = None,
                          choices=[('', ''),
                                   ('?genre', 'genre'),
-                                  ('?translator', 'translator'),
-                                  ('?author', 'author'),
+                                  ('?translator_name', 'translator'),
+                                  ('?author_name', 'author'),
                                   ('?olangLabel', 'original language'),
                                   ('?tlangLabel', 'target language')
                                   ])
