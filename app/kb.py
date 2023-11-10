@@ -313,7 +313,12 @@ select distinct * where {
     """
         q += "}"
 
-        q += " ORDER BY ?magazine_id ?pubDate "
+        q += " ORDER BY "
+
+        if "sortby" in kwargs:
+            q += f"{ kwargs['sortby'] }"
+
+        q += " ?magazine_id ?pubDate "
 
         if "offset" in kwargs:
             q += f"OFFSET {kwargs['offset']} "

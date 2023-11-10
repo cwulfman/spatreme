@@ -63,6 +63,7 @@ async def post_translations(request: Request):
                 "after_date": form_data.get('after_date'),
                 "before_date":form_data.get('before_date'),
                 "magazine": form_data.get('magazine'),
+                "sortby": form_data.get('sortby'),
                }
 
     result: QueryResult = kb.translations(1, 10, filters)
@@ -96,6 +97,8 @@ async def post_translations(request: Request):
     form.before_date.choices = form_data['date_choices']
     form.before_date.data = filters['before_date']
 
+    form.sortby.data = filters['sortby']
+
     current_page = 1
     next_page = 2
     prev_page = None
@@ -120,7 +123,9 @@ async def get_translations(request: Request,
                            genre: Optional[str] = 'any',
                            after_date: Optional[int | str] = 'any',
                            before_date: Optional[int | str] = 'any',
-                           magazine: Optional[str] = 'any'):
+                           magazine: Optional[str] = 'any',
+                           sortby: Optional[str] = '',
+                           ):
 
     form_data = await request.form()
     form: TranslationForm = await TranslationForm.from_formdata(request)
@@ -131,6 +136,7 @@ async def get_translations(request: Request,
                 "after_date": after_date,
                 "before_date": before_date,
                 "magazine": magazine,
+                "sortby": sortby,
         }
 
     
