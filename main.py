@@ -5,7 +5,7 @@ from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.templating import _TemplateResponse
-from app.schemas import TranslationForm
+# from app.schemas import TranslationForm
 from typing import Optional
 from app.kb import Kb, QueryResult
 from app.forms import TranslationForm
