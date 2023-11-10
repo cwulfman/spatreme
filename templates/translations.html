@@ -1,4 +1,8 @@
 {% extends "base.html" %}
+{% macro prev()  -%}
+sl={{form.sl.data}}&amp;tl={{form.tl.data}}&amp;genre={{form.genre.data}}&amp;after_date={{form.after_date.data }}&amp;before_date={{form.before_date.data }}&amp;magazine={{form.magazine.data}}
+{%- endmacro %}
+
 {% block content %}
 <div class="content">
   <section class="section">
@@ -84,7 +88,6 @@
       <div class="field-body"></div>
       <div class="field-body"></div>
     </div>
-
     
     <div class="field is-grouped is-grouped-centered">
       <div class="control">
@@ -103,7 +106,7 @@
       </a>
       {% endif %}
       {% if next_page %}
-      <a class="pagination-next" href="translations?page={{ next_page }}&amp;page_size={{page_size}}">
+      <a class="pagination-next" href="translations?{{prev()}}&amp;page={{ next_page }}&amp;page_size={{page_size}}">
             Next
       </a>
       {% endif %}

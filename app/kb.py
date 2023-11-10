@@ -313,6 +313,8 @@ select distinct * where {
     """
         q += "}"
 
+        q += " ORDER BY ?magazine_id ?pubDate "
+
         if "offset" in kwargs:
             q += f"OFFSET {kwargs['offset']} "
         
@@ -320,8 +322,6 @@ select distinct * where {
             q += f"LIMIT {kwargs['limit']} "
         
         return q
-
-
 
 
 
@@ -333,6 +333,7 @@ select distinct * where {
         kwargs["offset"] = offset * page_size
         
         query = self.construct_translation_query(kwargs)
+        
         return self.query(query)
 
 
