@@ -453,7 +453,6 @@ WHERE {
 
             if 'magLabel' in row and row['magLabel'] not in translators[id]['magazines']:
                 translators[id]['magazines'].append(row['magLabel'])
-        breakpoint()
 
         # return result
         return translators.values()

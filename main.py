@@ -224,7 +224,6 @@ async def get_translators(request: Request,
 
     result:list = kb.translators(filters)
 
-    breakpoint()
     return templates.TemplateResponse("translators.html",
                                       { "request" : request,
                                         "form" : form,
