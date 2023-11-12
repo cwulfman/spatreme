@@ -222,13 +222,13 @@ async def get_translators(request: Request,
     if sortby:
         filters['sortby'] = sortby
 
-    result: QueryResult = kb.translators(filters)
+    result:list = kb.translators(filters)
 
-
+    breakpoint()
     return templates.TemplateResponse("translators.html",
                                       { "request" : request,
                                         "form" : form,
-                                        "translators": result.data })
+                                        "translators": result })
 
 
 
@@ -241,7 +241,7 @@ async def post_translators(request: Request):
                "language_area" : form.language_area.data,
                "sortby": form.sortby.data}
 
-    result: QueryResult = kb.translators(filters)
+    result:list = kb.translators(filters)
 
     form_choices = {
         "gender_choices" : [(item['gender'], item['gender']) for item in kb.genders().data],
@@ -256,13 +256,10 @@ async def post_translators(request: Request):
     form.nationality.choices = form_choices['nationality_choices']
     form.language_area.choices = form_choices['language_area_choices']
 
-    result: QueryResult = kb.translators(filters)
-
-
     return templates.TemplateResponse("translators.html",
                                       { "request" : request,
                                         "form" : form,
-                                        "translators": result.data })
+                                        "translators": result })
 
 
 

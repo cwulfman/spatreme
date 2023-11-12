@@ -58,18 +58,26 @@
           <thead>
             <tr>
               <th>Name</th>
+              <th>Birth</th>
+              <th>Death</th>
               <th>Gender</th>
-              <th>Nationality</th>
-              <th>Language Area</th>
+              <th>Nationalities</th>
+              <th>Genres</th>
+              <th>Language Areas</th>
+              <th>Magazines</th>
             </tr>
           </thead>
           <tbody>
             {% for translator in translators %}
             <tr>
-              <td><a href="/translators/{{ translator.translator.split('/')[-1] }}">{{ translator.label }}</a></td>
-              <td>{{ translator.gender }}</td>
-              <td>{{ translator.nationality }}</td>
-              <td>{{ translator.language_area }}</td>
+              <td><a href="/translators/{{ translator.id.split('/')[-1] }}">{{ translator.label }}</a></td>
+              <td>{{ translator.birthDate | default('', true) }}</td>
+              <td>{{ translator.deathDate | default('', true) }}</td>
+              <td>{{ translator.gender | default('', true) }}</td>
+              <td>{{ translator.nationalities | join('; ') }}</td>
+              <td>{{ translator.genres | join('; ') }}</td>
+              <td>{{ translator.language_areas | join('; ') }}</td>
+              <td>{{ translator.magazines | join('; ') }}</td>
             </tr>
             {% endfor %}
           </tbody>

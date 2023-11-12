@@ -375,7 +375,7 @@ select distinct * where {
         return self.query(query)
 
 
-    def translators(self, kwargs:dict) -> QueryResult:
+    def translators(self, kwargs:dict) -> list:
         query = """PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX lrm: <http://iflastandards.info/ns/lrm/lrmer/>
@@ -383,12 +383,17 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX spatrem: <http://spacesoftranslation.org/ns/spatrem/>
 
-SELECT distinct ?translator ?label ?birthDate  ?deathDate ?gender ?nationality ?language_area
+SELECT distinct ?magazine ?magLabel ?genre ?translator ?label ?birthDate  ?deathDate ?gender ?nationality ?language_area
 WHERE {
-	?original lrm:R68_is_inspiration_for ?translation .
-    ?translation lrm:R16i_was_created_by / crm:P14_carried_out_by ?translator .
-    ?translator rdfs:label ?label . 	
-    FILTER(?label != "Anon.")\n"""
+        ?original lrm:R68_is_inspiration_for ?translation .
+        ?translation lrm:R16i_was_created_by / crm:P14_carried_out_by ?translator .
+        ?translation spatrem:genre ?genre .
+        ?translation lrm:R67i_is_part_of / lrm:R67i_is_part_of ?magazine .
+        ?magazine rdfs:label ?magLabel .
+        ?translator rdfs:label ?label .
+        ?translator rdfs:label ?label . 	
+        FILTER(?label != "Anon.")
+"""
 
         if kwargs['gender'] and kwargs['gender'] != 'any':
             query += f"""?translator spatrem:gender ?gender .
@@ -404,8 +409,6 @@ WHERE {
             """
         else:
             query += "OPTIONAL { ?translator spatrem:nationality ?nationality .}\n"
-
-
 
         if kwargs['language_area'] and kwargs['language_area'] != 'any':
             query += f"""?translator spatrem:language_area ?language_area .
@@ -423,7 +426,37 @@ WHERE {
 
         query += " ?label"
 
-        return self.query(query)
+        result = self.query(query)
+        translators = {}
+        for row in result.data:
+            id = row['translator']
+            if id not in translators:
+                translators[row['translator']] = { "id" : id,
+                                                   "label" : row.get('label'),
+                                                   "gender": row.get('gender'),
+                                                   "birthDate": row.get('birthDate'),
+                                                   "deathDate": row.get('deathDate'),
+                                                   "nationalities": [],
+                                                   "language_areas": [],
+                                                   "genres" : [],
+                                                   "magazines": []
+                                                  }
+                
+            if 'nationality' in row and row['nationality'] not in translators[id]['nationalities']:
+                translators[id]['nationalities'].append(row['nationality'])
+
+            if 'language_area' in row and row['language_area'] not in translators[id]['language_areas']:
+                translators[id]['language_areas'].append(row['language_area'])
+
+            if 'genre' in row and row['genre'] not in translators[id]['genres']:
+                translators[id]['genres'].append(row['genre'])
+
+            if 'magLabel' in row and row['magLabel'] not in translators[id]['magazines']:
+                translators[id]['magazines'].append(row['magLabel'])
+        breakpoint()
+
+        # return result
+        return translators.values()
 
 
     
