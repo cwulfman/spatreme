@@ -63,6 +63,8 @@
               <th>Gender</th>
               <th>Nationalities</th>
               <th>Genres</th>
+              <th>Source Languages</th>
+              <th>Target Languages</th>
               <th>Language Areas</th>
               <th>Magazines</th>
             </tr>
@@ -76,6 +78,8 @@
               <td>{{ translator.gender | default('', true) }}</td>
               <td>{{ translator.nationalities | join('; ') }}</td>
               <td>{{ translator.genres | join('; ') }}</td>
+              <td>{{ translator.source_langs | join('; ') }}</td>
+              <td>{{ translator.target_langs | join('; ') }}</td>
               <td>{{ translator.language_areas | join('; ') }}</td>
               <td>{{ translator.magazines | join('; ') }}</td>
             </tr>

@@ -375,7 +375,7 @@ select distinct * where {
         return self.query(query)
 
 
-    def translators(self, kwargs:dict) -> list:
+    def translators(self, kwargs:dict):
         query = """PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX lrm: <http://iflastandards.info/ns/lrm/lrmer/>
@@ -383,15 +383,19 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX spatrem: <http://spacesoftranslation.org/ns/spatrem/>
 
-SELECT distinct ?magazine ?magLabel ?genre ?translator ?label ?birthDate  ?deathDate ?gender ?nationality ?language_area
+SELECT distinct *
 WHERE {
         ?original lrm:R68_is_inspiration_for ?translation .
         ?translation lrm:R16i_was_created_by / crm:P14_carried_out_by ?translator .
+        ?original lrm:R3i_is_realised_by / crm:P72_has_language ?olang .
+        ?translation lrm:R3i_is_realised_by / crm:P72_has_language ?tlang .
+
         ?translation spatrem:genre ?genre .
         ?translation lrm:R67i_is_part_of / lrm:R67i_is_part_of ?magazine .
         ?magazine rdfs:label ?magLabel .
         ?translator rdfs:label ?label .
-        ?translator rdfs:label ?label . 	
+	?olang rdfs:label ?olangLabel .
+        ?tlang rdfs:label ?tlangLabel .
         FILTER(?label != "Anon.")
 """
 
@@ -438,6 +442,8 @@ WHERE {
                                                    "deathDate": row.get('deathDate'),
                                                    "nationalities": [],
                                                    "language_areas": [],
+                                                   "source_langs": [],
+                                                   "target_langs": [],
                                                    "genres" : [],
                                                    "magazines": []
                                                   }
@@ -453,6 +459,12 @@ WHERE {
 
             if 'magLabel' in row and row['magLabel'] not in translators[id]['magazines']:
                 translators[id]['magazines'].append(row['magLabel'])
+
+            if 'olangLabel' in row and row['olangLabel'] not in translators[id]['source_langs']:
+                translators[id]['source_langs'].append(row['olangLabel'])
+
+            if 'tlangLabel' in row and row['tlangLabel'] not in translators[id]['target_langs']:
+                translators[id]['target_langs'].append(row['tlangLabel'])
 
         # return result
         return translators.values()
