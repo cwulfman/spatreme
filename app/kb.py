@@ -39,6 +39,32 @@ select distinct ?lang ?label ?key where {
 }"""
         return self.query(q)
         
+    def source_languages(self) -> QueryResult:
+        q="""PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX lrm: <http://iflastandards.info/ns/lrm/lrmer/>
+select distinct ?lang ?label ?key where { 
+        ?original lrm:R68_is_inspiration_for ?translation .
+        ?original lrm:R3i_is_realised_by / crm:P72_has_language ?lang .
+        ?lang rdfs:label ?label .
+        ?lang dcterms:identifier ?key .
+}"""
+        return self.query(q)
+        
+    def target_languages(self) -> QueryResult:
+        q="""PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX lrm: <http://iflastandards.info/ns/lrm/lrmer/>
+select distinct ?lang ?label ?key where { 
+        ?original lrm:R68_is_inspiration_for ?translation .
+        ?translation lrm:R3i_is_realised_by / crm:P72_has_language ?lang .
+        ?lang rdfs:label ?label .
+        ?lang dcterms:identifier ?key .
+}"""
+        return self.query(q)
+        
 
     def dates(self) -> QueryResult:
         q="""PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
@@ -51,6 +77,18 @@ select distinct ?date where {
 ?issue lrm:P2_has_type ?issuetype .
 ?issue spatrem:pubDate ?date .
 } ORDER BY ?date"""
+        return self.query(q)
+
+    def birth_dates(self) -> QueryResult:
+        q="""PREFIX spatrem: <http://spacesoftranslation.org/ns/spatrem/>
+select distinct ?date WHERE {?s spatrem:year_birth ?date .}
+order by ?date"""
+        return self.query(q)
+
+    def death_dates(self) -> QueryResult:
+        q="""PREFIX spatrem: <http://spacesoftranslation.org/ns/spatrem/>
+select distinct ?date WHERE {?s spatrem:year_death ?date .}
+order by ?date"""
         return self.query(q)
 
 
@@ -393,11 +431,15 @@ WHERE {
         ?translation spatrem:genre ?genre .
         ?translation lrm:R67i_is_part_of / lrm:R67i_is_part_of ?magazine .
         ?magazine rdfs:label ?magLabel .
+        ?magazine dcterms:identifier ?magKey .
         ?translator rdfs:label ?label .
 	?olang rdfs:label ?olangLabel .
         ?tlang rdfs:label ?tlangLabel .
         FILTER(?label != "Anon.")
 """
+
+        if kwargs['magazine'] and kwargs['magazine'] != 'any':
+            query += f"FILTER(?magazine = <{kwargs['magazine']}>)\n"
 
         if kwargs['gender'] and kwargs['gender'] != 'any':
             query += f"""?translator spatrem:gender ?gender .
@@ -429,7 +471,6 @@ WHERE {
             query += f"{kwargs['sortby']} "
 
         query += " ?label"
-
         result = self.query(query)
         translators = {}
         for row in result.data:

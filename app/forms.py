@@ -20,9 +20,19 @@ class TranslationForm(StarletteForm):
 
 
 class TranslatorForm(StarletteForm):
+    birth_date = SelectField('Born after', default = 'any')
+    death_date = SelectField('Died before', default = 'any')
     gender = SelectField('Gender', default='any')
     nationality = SelectField('Nationality', default='any')
+    magazine = SelectField('Magazine', default='any')
     language_area = SelectField('Language Area', default='any')
+    sl = SelectField('Source Language', default='any')
+    tl = SelectField('Target Language', default='any')
+    genre = SelectField('Genre', default='any')
+    pub_after = SelectField('Published After', default='any')
+    pub_before = SelectField('Published Before', default='any')
+
+
     sortby = SelectField("Sort by", default = None,
                          choices=[('', ''),
                                   ('?gender', 'gender'),

@@ -70,6 +70,8 @@ async def post_translations(request: Request):
 
     form_data = {
         "lang_choices" : [(item['lang'], item['label']) for item in kb.languages().data],
+        "source_lang_choices" : [(item['lang'], item['label']) for item in kb.source_languages().data],
+        "target_lang_choices" : [(item['lang'], item['label']) for item in kb.target_languages().data],
         "magazine_choices": [(item['magazine'], item['label']) for item in kb.magazines().data],
         "date_choices": [(item['date'], item['date']) for item in kb.dates().data],
         "genre_choices" : [(item['genre'], item['genre']) for item in kb.genres().data]
@@ -82,10 +84,10 @@ async def post_translations(request: Request):
     form.genre.choices = form_data['genre_choices']
     form.genre.data = filters['genre']
 
-    form.sl.choices = form_data['lang_choices']
+    form.sl.choices = form_data['source_lang_choices']
     form.sl.data = filters['sl']
 
-    form.tl.choices = form_data['lang_choices']
+    form.tl.choices = form_data['target_lang_choices']
     form.tl.data = filters['tl']
 
     form .magazine.choices = form_data['magazine_choices']
@@ -143,9 +145,12 @@ async def get_translations(request: Request,
     result: QueryResult = kb.translations(page, page_size, filters)
     form_data = {
         "lang_choices" : [(item['lang'], item['label']) for item in kb.languages().data],
+        "source_lang_choices" : [(item['lang'], item['label']) for item in kb.source_languages().data],
+        "target_lang_choices" : [(item['lang'], item['label']) for item in kb.target_languages().data],
         "magazine_choices": [(item['magazine'], item['label']) for item in kb.magazines().data],
         "date_choices": [(item['date'], item['date']) for item in kb.dates().data],
-        "genre_choices" : [(item['genre'], item['genre']) for item in kb.genres().data]
+        "genre_choices" : [(item['genre'], item['genre']) for item in kb.genres().data],
+        
         }
 
     for _,v in form_data.items():
@@ -157,10 +162,10 @@ async def get_translations(request: Request,
     form.genre.data = filters['genre']
 
 
-    form.sl.choices = form_data['lang_choices']
+    form.sl.choices = form_data['source_lang_choices']
     form.sl.data = filters['sl']
 
-    form.tl.choices = form_data['lang_choices']
+    form.tl.choices = form_data['target_lang_choices']
     form.tl.data = filters['tl']
 
     form .magazine.choices = form_data['magazine_choices']
@@ -198,12 +203,28 @@ async def get_translators(request: Request,
                           gender: Optional[str] = 'any',
                           nationality: Optional[str] = 'any',
                           language_area: Optional[str] = 'any',
+                          magazine: Optional[str] = 'any',
+                          birth_date: Optional[str] = 'any',
+                          death_date: Optional[str] = 'any',
+                          genre: Optional[str] = 'any',
+                          pub_after: Optional[int | str] = 'any',
+                          pub_before: Optional[int | str] = 'any',
+                          sl: Optional[str] = 'any',
+                          tl: Optional[str] = 'any',
                           sortby: Optional[str] = ''):
 
     form_choices = {
         "gender_choices" : [(item['gender'], item['gender']) for item in kb.genders().data],
         "nationality_choices" : [(item['nationality'], item['nationality']) for item in kb.nationalities().data],
         "language_area_choices" : [(item['language_area'], item['language_area']) for item in kb.language_areas().data],
+        "magazine_choices": [(item['magazine'], item['label']) for item in kb.magazines().data],
+        "birth_date_choices": [(item['date'], item['date']) for item in kb.birth_dates().data],
+        "death_date_choices": [(item['date'], item['date']) for item in kb.death_dates().data],
+        "genre_choices" : [(item['genre'], item['genre']) for item in kb.genres().data],
+        "pubDate_choices": [(item['date'], item['date']) for item in kb.dates().data],
+        "sl_choices" : [(item['lang'], item['label']) for item in kb.source_languages().data],
+        "tl_choices" : [(item['lang'], item['label']) for item in kb.target_languages().data],
+
         }
 
     for _,v in form_choices.items():
@@ -214,15 +235,31 @@ async def get_translators(request: Request,
     form.gender.choices = form_choices['gender_choices']
     form.nationality.choices = form_choices['nationality_choices']
     form.language_area.choices = form_choices['language_area_choices']
+    form.magazine.choices = form_choices['magazine_choices']
+    form.birth_date.choices = form_choices['birth_date_choices']
+    form.death_date.choices = form_choices['death_date_choices']
+    form.genre.choices = form_choices['genre_choices']
+    form.pub_after.choices = form_choices['pubDate_choices']
+    form.pub_before.choices = form_choices['pubDate_choices']
+    form.sl.choices = form_choices['sl_choices']    
+    form.tl.choices = form_choices['tl_choices']    
 
 
     filters = {"gender" : gender,
                "nationality" : nationality,
-               "language_area" : language_area }
+               "language_area" : language_area,
+               "magazine": magazine,
+               "birth_date": birth_date,
+               "death_date": death_date,
+               "pub_after": pub_after,
+               "pub_before": pub_before,
+               "sl": sl,
+               "tl": tl,
+               }
     if sortby:
         filters['sortby'] = sortby
 
-    result:list = kb.translators(filters)
+    result = kb.translators(filters)
 
     return templates.TemplateResponse("translators.html",
                                       { "request" : request,
@@ -238,6 +275,7 @@ async def post_translators(request: Request):
     filters = {"gender" : form.gender.data,
                "nationality" : form.nationality.data,
                "language_area" : form.language_area.data,
+               "magazine" : form.magazine.data,
                "sortby": form.sortby.data}
 
     result:list = kb.translators(filters)
@@ -246,6 +284,7 @@ async def post_translators(request: Request):
         "gender_choices" : [(item['gender'], item['gender']) for item in kb.genders().data],
         "nationality_choices" : [(item['nationality'], item['nationality']) for item in kb.nationalities().data],
         "language_area_choices" : [(item['language_area'], item['language_area']) for item in kb.language_areas().data],
+        "magazine_choices": [(item['magazine'], item['label']) for item in kb.magazines().data],
         }
 
     for _,v in form_choices.items():
@@ -254,6 +293,7 @@ async def post_translators(request: Request):
     form.gender.choices = form_choices['gender_choices']
     form.nationality.choices = form_choices['nationality_choices']
     form.language_area.choices = form_choices['language_area_choices']
+    form.magazine.choices = form_choices['magazine_choices']
 
     return templates.TemplateResponse("translators.html",
                                       { "request" : request,

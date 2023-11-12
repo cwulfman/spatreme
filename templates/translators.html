@@ -9,6 +9,26 @@
           {{ form.csrf_token }}
           
           <div class="field">
+            <label class="label">{{ form.birth_date.label }}</label>
+            <div class="control">
+              <div class="select is-narrow">
+                {{ form.birth_date }}
+              </div>
+            </div>
+          </div>
+          
+          
+          <div class="field">
+            <label class="label">{{ form.death_date.label }}</label>
+            <div class="control">
+              <div class="select is-narrow">
+                {{ form.death_date }}
+              </div>
+            </div>
+          </div>
+          
+          
+          <div class="field">
             <label class="label">{{ form.gender.label }}</label>
             <div class="control">
               <div class="select is-narrow">
@@ -27,6 +47,15 @@
           </div>
           
           <div class="field">
+            <label class="label">{{ form.magazine.label }}</label>
+            <div class="control">
+              <div class="select is-narrow">
+                {{ form.magazine }}
+              </div>
+            </div>
+          </div>
+          
+          <div class="field">
             <label class="label">{{ form.language_area.label }}</label>
             <div class="control">
               <div class="select is-narrow">
@@ -34,6 +63,58 @@
               </div>
             </div>
           </div>
+
+          
+          <div class="field">
+            <label class="label">{{ form.sl.label }}</label>
+            <div class="control">
+              <div class="select is-narrow">
+                {{ form.sl }}
+              </div>
+            </div>
+          </div>
+
+          
+          <div class="field">
+            <label class="label">{{ form.tl.label }}</label>
+            <div class="control">
+              <div class="select is-narrow">
+                {{ form.tl }}
+              </div>
+            </div>
+          </div>
+
+          
+          <div class="field">
+            <label class="label">{{ form.genre.label }}</label>
+            <div class="control">
+              <div class="select is-narrow">
+                {{ form.genre }}
+              </div>
+            </div>
+          </div>
+
+          
+          <div class="field">
+            <label class="label">{{ form.pub_after.label }}</label>
+            <div class="control">
+              <div class="select is-narrow">
+                {{ form.pub_after }}
+              </div>
+            </div>
+          </div>
+
+          
+          
+          <div class="field">
+            <label class="label">{{ form.pub_before.label }}</label>
+            <div class="control">
+              <div class="select is-narrow">
+                {{ form.pub_before }}
+              </div>
+            </div>
+          </div>
+
           
           <div class="field">
             <label class="label">{{ form.sortby.label }}</label>
