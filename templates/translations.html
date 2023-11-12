@@ -107,7 +107,8 @@ sl={{form.sl.data}}&amp;tl={{form.tl.data}}&amp;genre={{form.genre.data}}&amp;af
           <thead>
             <tr>
               <th>Magazine</th>
-              <th>Issue</th>
+              <th>Volume</th>
+              <th>Number</th>
               <th>Pub Date</th>
               <th>Title</th>
               <th>Genre</th>
@@ -121,7 +122,8 @@ sl={{form.sl.data}}&amp;tl={{form.tl.data}}&amp;genre={{form.genre.data}}&amp;af
             {% for translation in translations %}
             <tr>
               <td>{{ translation['magazine_label'] }}</td>
-              <td>{{ translation['issue_label'] }}</td>
+              <td>{{ translation['volume'] }}</td>
+              <td>{{ translation['number'] }}</td>
               <td>{{ translation['pubDate'] }}</td>
               <td>{{ translation['title'] }}</td>
               <td>{{ translation['genre'] }}</td>

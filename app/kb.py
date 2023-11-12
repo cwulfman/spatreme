@@ -121,15 +121,16 @@ PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX spatrem: <http://spacesoftranslation.org/ns/spatrem/>        
 PREFIX dcterms: <http://purl.org/dc/terms/>
-SELECT distinct ?issue ?issueLabel ?issueId ?issueNo ?pubDate
+SELECT distinct ?issue ?issueLabel ?issueId ?number ?volume ?pubDate
 WHERE {{
         ?magazine dcterms:identifier "{key}" ;
                   rdfs:label ?label ;
                   lrm:R67_has_part ?issue .
         ?issue rdfs:label ?issueLabel ;
                dcterms:identifier ?issueId ;
-               spatrem:number ?issueNo ;
+               spatrem:number ?number ;
                spatrem:pubDate ?pubDate .
+        OPTIONAL {{ ?issue spatrem:volume ?volume . }}
 
 }} order by ?issueId"""
 
@@ -138,7 +139,8 @@ WHERE {{
             issue = {
                 "id" : i['issueId'],
                 "label" : i['issueLabel'],
-                "number": i['issueNo'],
+                "volume": i['volume'],
+                "number": i['number'],
                 "pubDate" : i['pubDate'],
             }
             issues.append(issue)
@@ -160,6 +162,7 @@ WHERE {{
                dcterms:identifier ?id ;
                spatrem:number ?no ;
                spatrem:pubDate ?pubDate .
+        OPTIONAL {{ ?issue spatrem:volume ?volume . }}
 
 }}"""
         return self.query(q)
@@ -178,6 +181,7 @@ WHERE {{
                   rdfs:label ?issueLabel ;
                   spatrem:number ?issueNo ;
                   spatrem:pubDate ?pubDate .
+        OPTIONAL {{ ?issue spatrem:volume ?volume . }}
         ?magazine rdfs:label ?magLabel ;
                   dcterms:identifier ?magId .
 }}"""
@@ -228,6 +232,7 @@ WHERE {{
                             "magazine": info["magazine"],
                             "magLabel": info["magLabel"],
                             "magId": info["magId"],
+                           "volume": info["volume"],
                            "number": info["issueNo"],
                             "pubDate": info["pubDate"]}
         result['constituents'] = constituents
@@ -308,7 +313,10 @@ select distinct * where {
             q += f"FILTER(?genre =  '{kwargs['genre']}' )\n"
 
 
-        q += "?issue  spatrem:pubDate ?pubDate .\n"
+        q += """?issue  spatrem:pubDate ?pubDate ;
+                        spatrem:number ?number .
+                OPTIONAL { ?issue spatrem:volume ?volume . }
+        """
 
 
         if kwargs["after_date"] and kwargs['after_date'] != 'any':

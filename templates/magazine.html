@@ -9,6 +9,7 @@
       <thead>
         <tr>
           <th>issue id</th>
+          <th>issue volume</th>
           <th>issue number</th>
           <th>year published</th>
         </tr>
@@ -17,6 +18,7 @@
         {% for issue in issues %}
         <tr>
           <td><a href="/issues/{{ issue.id }}">{{ issue.id }}</a></td>
+          <td>{{ issue.volume }}</td>
           <td>{{ issue.number }}</td>
           <td>{{ issue.pubDate }}</td>
         </tr>
