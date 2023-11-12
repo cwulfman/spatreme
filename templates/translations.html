@@ -4,159 +4,138 @@ sl={{form.sl.data}}&amp;tl={{form.tl.data}}&amp;genre={{form.genre.data}}&amp;af
 {%- endmacro %}
 
 {% block content %}
-<div class="content">
-  <section class="section">
-  <form method="POST" action="">
-    {{ form.csrf_token }}
-
-    <div class="field is-horizontal">
-      <div class="field-label is-normal">
-        <label class="label">{{ form.sl.label }}</label>
-      </div>
-      <div class="field-body">
-        <div class="field is-narrow">
-          <div class="control">
-            <div class="select is-narrow">
-              {{ form.sl }}
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="field-label is-normal">
-        <label class="label">{{ form.tl.label }}</label>
-      </div>
-      <div class="field-body">
-        <div class="field is-narrow">
-          <div class="control">
-            <div class="select is-narrow">
-              {{ form.tl }}
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="field-label is-normal">
-        <label class="label">{{ form.after_date.label }}</label>
-      </div>
-      <div class="field-body">
-        <div class="field is-narrow">
-          <div class="control">
-            <div class="select is-narrow">
-              {{ form.after_date }}
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="field-label is-normal">
-        <label class="label">{{ form.before_date.label }}</label>
-      </div>
-      <div class="field-body">
-        <div class="field is-narrow">
-          <div class="control">
-            <div class="select is-narrow">
-              {{ form.before_date }}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="field is-horizontal">
-      <div class="field-label is-normal">
-        <label class="label">{{ form.magazine.label }}</label>
-      </div>
-      <div class="field-body">
-        <div class="field is-narrow">
-          <div class="control">
-            <div class="select is-narrow">
-              {{ form.magazine }}
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="field-label is-normal">
-        <label class="label">{{ form.genre.label }}</label>
-      </div>
-      <div class="field-body">
-        <div class="field is-narrow">
-          <div class="control">
-            <div class="select is-narrow">
-              {{ form.genre }}
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="field-label is-normal">
-        <label class="label">{{ form.sortby.label }}</label>
-      </div>
-      <div class="field-body">
-        <div class="field is-narrow">
-          <div class="control">
-            <div class="select is-narrow">
-              {{ form.sortby }}
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="field-body"></div>
-    </div>
+<div class="section">
+  <div class="container">
+    <h1 class="title">Translations</h1>
     
-    <div class="field is-grouped is-grouped-centered">
-      <div class="control">
-        <button class="button is-primary mb-2">Query</button>
-      </div>
-    </div>
-  </form>
-  </section>
-  <hr />
-  <section class="section">
+    <div class="columns">
+      <div class="column is-one-quarter">
 
-    <nav class="pagination is-right" role="navigation" aria-label="pagination">
-      {% if prev_page %}
-      <a class="pagination-previous" href="translations?page={{ prev_page }}&amp;page_size={{page_size}}">
-      Previous
-      </a>
-      {% endif %}
-      {% if next_page %}
-      <a class="pagination-next" href="translations?{{prev()}}&amp;page={{ next_page }}&amp;page_size={{page_size}}">
-            Next
-      </a>
-      {% endif %}
-      <ul class="pagination-list">
-        <a class="pagination-link is-current">{{ current_page }}</a>
-      </ul>
-    </nav>
+        <form method="POST" action="">
+          {{ form.csrf_token }}
+          
+          <div class="field">
+            <label class="label">{{ form.sl.label }}</label>            
+            <div class="control">
+              <div class="select is-narrow">
+                {{ form.sl }}
+              </div>
+            </div>
+          </div>
 
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Magazine</th>
-          <th>Issue</th>
-          <th>Pub Date</th>
-          <th>Title</th>
-          <th>Genre</th>
-          <th>Translator</th>
-          <th>Author</th>
-          <th>SL</th>
-          <th>TL</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for translation in translations %}
-        <tr>
-          <td>{{ translation['magazine_label'] }}</td>
-          <td>{{ translation['issue_label'] }}</td>
-          <td>{{ translation['pubDate'] }}</td>
-          <td>{{ translation['title'] }}</td>
-          <td>{{ translation['genre'] }}</td>
-          <td><a href="/translators/{{translation['translator'].split('/')[-1]}}">{{ translation['translator_name'] }}</a></td>
-          <td>{{ translation['author_name'] }}</td>
-          <td>{{ translation['olangLabel'] }}</td>
-          <td>{{ translation['tlangLabel'] }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </section>
-  </div>
-  {% endblock %}
+          <div class="field">
+            <label class="label">{{ form.tl.label }}</label>
+            <div class="control">
+              <div class="select is-narrow">
+                {{ form.tl }}
+              </div>
+            </div>
+          </div>
+          
+          <div class="field">
+            <label class="label">{{ form.after_date.label }}</label>
+            <div class="control">
+              <div class="select is-narrow">
+                {{ form.after_date }}
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label">{{ form.before_date.label }}</label>
+            <div class="control">
+              <div class="select is-narrow">
+                {{ form.before_date }}
+              </div>
+            </div>
+          </div>
+
+
+          <div class="field">
+            <label class="label">{{ form.magazine.label }}</label>
+            <div class="control">
+              <div class="select is-narrow">
+                {{ form.magazine }}
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label">{{ form.genre.label }}</label>
+            <div class="control">
+              <div class="select is-narrow">
+                {{ form.genre }}
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="label">{{ form.sortby.label }}</label>
+            <div class="control">
+              <div class="select is-narrow">
+                {{ form.sortby }}
+              </div>
+            </div>
+          </div>
+    
+          <div class="field">
+            <div class="control">
+              <input class="button" type="submit" value="Apply Filters">
+            </div>
+          </div>
+        </form>
+      </div> <!-- column -->
+
+      <div class="column is-three-quarters">
+        <nav class="pagination is-right" role="navigation" aria-label="pagination">
+          {% if prev_page %}
+          <a class="pagination-previous" href="translations?page={{ prev_page }}&amp;page_size={{page_size}}">
+            Previous
+          </a>
+          {% endif %}
+          {% if next_page %}
+          <a class="pagination-next" href="translations?{{prev()}}&amp;page={{ next_page }}&amp;page_size={{page_size}}">
+            Next_Page
+          </a>
+          {% endif %}
+          <ul class="pagination-list">
+            <a class="pagination-link is-current">{{ current_page }}</a>
+          </ul>
+        </nav>
+        
+        <table class="table" summary="table of translations">
+          <thead>
+            <tr>
+              <th>Magazine</th>
+              <th>Issue</th>
+              <th>Pub Date</th>
+              <th>Title</th>
+              <th>Genre</th>
+              <th>Translator</th>
+              <th>Author</th>
+              <th>SL</th>
+              <th>TL</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for translation in translations %}
+            <tr>
+              <td>{{ translation['magazine_label'] }}</td>
+              <td>{{ translation['issue_label'] }}</td>
+              <td>{{ translation['pubDate'] }}</td>
+              <td>{{ translation['title'] }}</td>
+              <td>{{ translation['genre'] }}</td>
+              <td><a href="/translators/{{translation['translator'].split('/')[-1]}}">{{ translation['translator_name'] }}</a></td>
+              <td>{{ translation['author_name'] }}</td>
+              <td>{{ translation['olangLabel'] }}</td>
+              <td>{{ translation['tlangLabel'] }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div> <!-- column -->
+    </div>   <!-- columns -->
+  </div>     <!-- container -->
+</div>       <!-- section -->
+{% endblock %}
 
