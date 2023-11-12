@@ -7,7 +7,7 @@ from fastapi.templating import Jinja2Templates
 from starlette.templating import _TemplateResponse
 from typing import Optional
 from app.kb import Kb, QueryResult
-from app.forms import TranslationForm
+from app.forms import TranslationForm, TranslatorForm
 
 class SpatremError(Exception):
     """Spatrem error of some kind"""
@@ -194,11 +194,77 @@ async def get_translations(request: Request,
 
 
 @app.get("/translators", response_class=HTMLResponse)
-async def get_translators(request: Request):
-    result: QueryResult = kb.translators()
+async def get_translators(request: Request,
+                          gender: Optional[str] = 'any',
+                          nationality: Optional[str] = 'any',
+                          language_area: Optional[str] = 'any',
+                          sortby: Optional[str] = ''):
+
+    form_choices = {
+        "gender_choices" : [(item['gender'], item['gender']) for item in kb.genders().data],
+        "nationality_choices" : [(item['nationality'], item['nationality']) for item in kb.nationalities().data],
+        "language_area_choices" : [(item['language_area'], item['language_area']) for item in kb.language_areas().data],
+        }
+
+    for _,v in form_choices.items():
+        v.insert(0, ('any', 'any'))
+
+    form: TranslatorForm = await TranslatorForm.from_formdata(request)
+
+    form.gender.choices = form_choices['gender_choices']
+    form.nationality.choices = form_choices['nationality_choices']
+    form.language_area.choices = form_choices['language_area_choices']
+
+
+    filters = {"gender" : gender,
+               "nationality" : nationality,
+               "language_area" : language_area }
+    if sortby:
+        filters['sortby'] = sortby
+
+    result: QueryResult = kb.translators(filters)
+
+
     return templates.TemplateResponse("translators.html",
-                                      { "request": request,
+                                      { "request" : request,
+                                        "form" : form,
                                         "translators": result.data })
+
+
+
+@app.post("/translators", response_class=HTMLResponse)
+async def post_translators(request: Request):
+    form: TranslatorForm = await TranslatorForm.from_formdata(request)
+
+    filters = {"gender" : form.gender.data,
+               "nationality" : form.nationality.data,
+               "language_area" : form.language_area.data,
+               "sortby": form.sortby.data}
+
+    result: QueryResult = kb.translators(filters)
+
+    form_choices = {
+        "gender_choices" : [(item['gender'], item['gender']) for item in kb.genders().data],
+        "nationality_choices" : [(item['nationality'], item['nationality']) for item in kb.nationalities().data],
+        "language_area_choices" : [(item['language_area'], item['language_area']) for item in kb.language_areas().data],
+        }
+
+    for _,v in form_choices.items():
+        v.insert(0, ('any', 'any'))
+
+    form.gender.choices = form_choices['gender_choices']
+    form.nationality.choices = form_choices['nationality_choices']
+    form.language_area.choices = form_choices['language_area_choices']
+
+    result: QueryResult = kb.translators(filters)
+
+
+    return templates.TemplateResponse("translators.html",
+                                      { "request" : request,
+                                        "form" : form,
+                                        "translators": result.data })
+
+
 
 @app.get("/translators/{id}", response_class=HTMLResponse)
 def get_translator(request: Request, id:str):

@@ -18,3 +18,15 @@ class TranslationForm(StarletteForm):
                                   ('?tlangLabel', 'target language')
                                   ])
 
+
+class TranslatorForm(StarletteForm):
+    gender = SelectField('Gender', default='any')
+    nationality = SelectField('Nationality', default='any')
+    language_area = SelectField('Language Area', default='any')
+    sortby = SelectField("Sort by", default = None,
+                         choices=[('', ''),
+                                  ('?gender', 'gender'),
+                                  ('?nationality', 'nationality'),
+                                  ('?language_area', 'language_area'),
+                                  ])
+

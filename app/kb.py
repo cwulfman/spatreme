@@ -1,3 +1,6 @@
+import functools
+
+from fastapi.routing import _prepare_response_content
 from SPARQLWrapper import SPARQLWrapper2, JSON
 # from rdflib import URIRef, Literal
 # import urllib.parse
@@ -56,6 +59,28 @@ select distinct ?date where {
 select distinct ?genre where {
 	?s spatrem:genre ?genre .    
 } order by ?genre"""
+        return self.query(q)
+
+    def genders(self) -> QueryResult:
+        q="""PREFIX spatrem: <http://spacesoftranslation.org/ns/spatrem/>
+select distinct ?gender where {
+    ?person spatrem:gender ?gender .
+} order by ?gender"""
+        return self.query(q)
+ 
+    def nationalities(self) -> QueryResult:
+        q="""PREFIX spatrem: <http://spacesoftranslation.org/ns/spatrem/>
+select distinct ?nationality where {
+    ?s spatrem:nationality ?nationality .
+} order by ?nationality"""
+        return self.query(q)
+
+ 
+    def language_areas(self) -> QueryResult:
+        q="""PREFIX spatrem: <http://spacesoftranslation.org/ns/spatrem/>
+select distinct ?language_area where {
+    ?s spatrem:language_area ?language_area .
+} order by ?language_area"""
         return self.query(q)
 
 
@@ -342,7 +367,7 @@ select distinct * where {
         return self.query(query)
 
 
-    def translators(self) -> QueryResult:
+    def translators(self, kwargs:dict) -> QueryResult:
         query = """PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX lrm: <http://iflastandards.info/ns/lrm/lrmer/>
@@ -350,18 +375,49 @@ PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX spatrem: <http://spacesoftranslation.org/ns/spatrem/>
 
-SELECT distinct ?translator ?label ?birthDate  ?deathDate ?gender ?nationality ?language_area WHERE {
+SELECT distinct ?translator ?label ?birthDate  ?deathDate ?gender ?nationality ?language_area
+WHERE {
 	?original lrm:R68_is_inspiration_for ?translation .
     ?translation lrm:R16i_was_created_by / crm:P14_carried_out_by ?translator .
     ?translator rdfs:label ?label . 	
-    FILTER(?label != "Anon.")
-    OPTIONAL { ?translator spatrem:year_birth ?birthDate .}
+    FILTER(?label != "Anon.")\n"""
+
+        if kwargs['gender'] and kwargs['gender'] != 'any':
+            query += f"""?translator spatrem:gender ?gender .
+            FILTER(?gender = '{kwargs['gender']}')
+            """
+        else:
+            query += "OPTIONAL { ?translator spatrem:gender ?gender .}\n"
+
+
+        if kwargs['nationality'] and kwargs['nationality'] != 'any':
+            query += f"""?translator spatrem:nationality ?nationality .
+            FILTER(?nationality = '{kwargs['nationality']}')
+            """
+        else:
+            query += "OPTIONAL { ?translator spatrem:nationality ?nationality .}\n"
+
+
+
+        if kwargs['language_area'] and kwargs['language_area'] != 'any':
+            query += f"""?translator spatrem:language_area ?language_area .
+            FILTER(?language_area = '{kwargs['language_area']}')
+            """
+        else:
+            query += "OPTIONAL { ?translator spatrem:language_area ?language_area .}\n"
+
+        query += """OPTIONAL { ?translator spatrem:year_birth ?birthDate .}
     OPTIONAL { ?translator spatrem:year_death ?deathDate .}
-    OPTIONAL { ?translator spatrem:gender ?gender .}
-    OPTIONAL { ?translator spatrem:nationality ?nationality .}
-    OPTIONAL { ?translator spatrem:language_area ?language_area .}
-} ORDER BY ?label"""
+} ORDER BY """
+
+        if 'sortby' in kwargs:
+            query += f"{kwargs['sortby']} "
+
+        query += " ?label"
+
         return self.query(query)
+
+
     
     def translator(self, uriref):
         infoq = f"""PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
