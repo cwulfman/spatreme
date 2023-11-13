@@ -204,8 +204,8 @@ async def get_translators(request: Request,
                           nationality: Optional[str] = 'any',
                           language_area: Optional[str] = 'any',
                           magazine: Optional[str] = 'any',
-                          birth_date: Optional[str] = 'any',
-                          death_date: Optional[str] = 'any',
+                          year_birth: Optional[str] = 'any',
+                          year_death: Optional[str] = 'any',
                           genre: Optional[str] = 'any',
                           pub_after: Optional[int | str] = 'any',
                           pub_before: Optional[int | str] = 'any',
@@ -218,8 +218,8 @@ async def get_translators(request: Request,
         "nationality_choices" : [(item['nationality'], item['nationality']) for item in kb.nationalities().data],
         "language_area_choices" : [(item['language_area'], item['language_area']) for item in kb.language_areas().data],
         "magazine_choices": [(item['magazine'], item['label']) for item in kb.magazines().data],
-        "birth_date_choices": [(item['date'], item['date']) for item in kb.birth_dates().data],
-        "death_date_choices": [(item['date'], item['date']) for item in kb.death_dates().data],
+        "year_birth_choices": [(item['date'], item['date']) for item in kb.year_births().data],
+        "year_death_choices": [(item['date'], item['date']) for item in kb.year_deaths().data],
         "genre_choices" : [(item['genre'], item['genre']) for item in kb.genres().data],
         "pubDate_choices": [(item['date'], item['date']) for item in kb.dates().data],
         "sl_choices" : [(item['lang'], item['label']) for item in kb.source_languages().data],
@@ -236,8 +236,8 @@ async def get_translators(request: Request,
     form.nationality.choices = form_choices['nationality_choices']
     form.language_area.choices = form_choices['language_area_choices']
     form.magazine.choices = form_choices['magazine_choices']
-    form.birth_date.choices = form_choices['birth_date_choices']
-    form.death_date.choices = form_choices['death_date_choices']
+    form.year_birth.choices = form_choices['year_birth_choices']
+    form.year_death.choices = form_choices['year_death_choices']
     form.genre.choices = form_choices['genre_choices']
     form.pub_after.choices = form_choices['pubDate_choices']
     form.pub_before.choices = form_choices['pubDate_choices']
@@ -249,8 +249,8 @@ async def get_translators(request: Request,
                "nationality" : nationality,
                "language_area" : language_area,
                "magazine": magazine,
-               "birth_date": birth_date,
-               "death_date": death_date,
+               "year_birth": year_birth,
+               "year_death": year_death,
                "pub_after": pub_after,
                "pub_before": pub_before,
                "sl": sl,

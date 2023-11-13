@@ -79,13 +79,13 @@ select distinct ?date where {
 } ORDER BY ?date"""
         return self.query(q)
 
-    def birth_dates(self) -> QueryResult:
+    def year_births(self) -> QueryResult:
         q="""PREFIX spatrem: <http://spacesoftranslation.org/ns/spatrem/>
 select distinct ?date WHERE {?s spatrem:year_birth ?date .}
 order by ?date"""
         return self.query(q)
 
-    def death_dates(self) -> QueryResult:
+    def year_deaths(self) -> QueryResult:
         q="""PREFIX spatrem: <http://spacesoftranslation.org/ns/spatrem/>
 select distinct ?date WHERE {?s spatrem:year_death ?date .}
 order by ?date"""
@@ -463,8 +463,23 @@ WHERE {
         else:
             query += "OPTIONAL { ?translator spatrem:language_area ?language_area .}\n"
 
-        query += """OPTIONAL { ?translator spatrem:year_birth ?birthDate .}
-    OPTIONAL { ?translator spatrem:year_death ?deathDate .}
+        if 'year_birth' in kwargs and kwargs['year_birth'] != 'any':
+            query += f"""?translator spatrem:year_birth ?year .
+            FILTER(?year_birth = '{kwargs['year_birth']}')
+            """
+        else:
+            query += "OPTIONAL { ?translator spatrem:year_birth ?year_birth .}\n"
+
+        if 'year_death' in kwargs and kwargs['year_death'] != 'any':
+            query += f"""?translator spatrem:year_death ?year .
+            FILTER(?year_death = '{kwargs['year_death']}')
+            """
+        else:
+            query += "OPTIONAL { ?translator spatrem:year_death ?year_death .}\n"
+
+
+
+        query += """
 } ORDER BY """
 
         if 'sortby' in kwargs:

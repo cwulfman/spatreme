@@ -20,8 +20,8 @@ class TranslationForm(StarletteForm):
 
 
 class TranslatorForm(StarletteForm):
-    birth_date = SelectField('Born after', default = 'any')
-    death_date = SelectField('Died before', default = 'any')
+    year_birth = SelectField('Born after', default = 'any')
+    year_death = SelectField('Died before', default = 'any')
     gender = SelectField('Gender', default='any')
     nationality = SelectField('Nationality', default='any')
     magazine = SelectField('Magazine', default='any')
