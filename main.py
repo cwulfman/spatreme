@@ -255,6 +255,7 @@ async def get_translators(request: Request,
                "pub_before": pub_before,
                "sl": sl,
                "tl": tl,
+               "genre": genre,
                }
     if sortby:
         filters['sortby'] = sortby
@@ -276,7 +277,18 @@ async def post_translators(request: Request):
                "nationality" : form.nationality.data,
                "language_area" : form.language_area.data,
                "magazine" : form.magazine.data,
-               "sortby": form.sortby.data}
+               "year_birth" : form.year_birth.data,
+               "year_death" : form.year_death.data,
+               "pub_before" : form.pub_before.data,
+               "pub_after" : form.pub_after.data,
+               "sl" : form.sl.data,
+               "tl" : form.tl.data,
+               "genre" : form.genre.data
+               }
+    
+    if form.sortby:
+        filters['sortby'] = form.sortby.data
+
 
     result:list = kb.translators(filters)
 
@@ -285,15 +297,43 @@ async def post_translators(request: Request):
         "nationality_choices" : [(item['nationality'], item['nationality']) for item in kb.nationalities().data],
         "language_area_choices" : [(item['language_area'], item['language_area']) for item in kb.language_areas().data],
         "magazine_choices": [(item['magazine'], item['label']) for item in kb.magazines().data],
+        "year_birth_choices": [(item['date'], item['date']) for item in kb.year_births().data],
+        "year_death_choices": [(item['date'], item['date']) for item in kb.year_deaths().data],
+        "genre_choices" : [(item['genre'], item['genre']) for item in kb.genres().data],
+        "pubDate_choices": [(item['date'], item['date']) for item in kb.dates().data],
+        "sl_choices" : [(item['lang'], item['label']) for item in kb.source_languages().data],
+        "tl_choices" : [(item['lang'], item['label']) for item in kb.target_languages().data],
+
         }
+
+    # form_choices = {
+    #     "gender_choices" : [(item['gender'], item['gender']) for item in kb.genders().data],
+    #     "nationality_choices" : [(item['nationality'], item['nationality']) for item in kb.nationalities().data],
+    #     "language_area_choices" : [(item['language_area'], item['language_area']) for item in kb.language_areas().data],
+    #     "magazine_choices": [(item['magazine'], item['label']) for item in kb.magazines().data],
+    #     }
 
     for _,v in form_choices.items():
         v.insert(0, ('any', 'any'))
+
+    # form.gender.choices = form_choices['gender_choices']
+    # form.nationality.choices = form_choices['nationality_choices']
+    # form.language_area.choices = form_choices['language_area_choices']
+    # form.magazine.choices = form_choices['magazine_choices']
 
     form.gender.choices = form_choices['gender_choices']
     form.nationality.choices = form_choices['nationality_choices']
     form.language_area.choices = form_choices['language_area_choices']
     form.magazine.choices = form_choices['magazine_choices']
+    form.year_birth.choices = form_choices['year_birth_choices']
+    form.year_death.choices = form_choices['year_death_choices']
+    form.genre.choices = form_choices['genre_choices']
+    form.pub_after.choices = form_choices['pubDate_choices']
+    form.pub_before.choices = form_choices['pubDate_choices']
+    form.sl.choices = form_choices['sl_choices']    
+    form.tl.choices = form_choices['tl_choices']    
+
+    
 
     return templates.TemplateResponse("translators.html",
                                       { "request" : request,

@@ -1,14 +1,5 @@
-import functools
-
-from fastapi.routing import _prepare_response_content
-from SPARQLWrapper import SPARQLWrapper2, JSON
-# from rdflib import URIRef, Literal
-# import urllib.parse
-from typing import List, Optional
+from SPARQLWrapper import SPARQLWrapper2
 from pydantic import BaseModel
-# import rdflib
-
-
 
 class QueryResult(BaseModel):
     count: int
@@ -35,7 +26,7 @@ PREFIX dcterms: <http://purl.org/dc/terms/>
 select distinct ?lang ?label ?key where { 
 	?lang a crm:E56_Language;
        rdfs:label ?label ;
-       dcterms:identifier ?key .
+        dcterms:identifier ?key .
 }"""
         return self.query(q)
         
@@ -427,21 +418,30 @@ WHERE {
         ?translation lrm:R16i_was_created_by / crm:P14_carried_out_by ?translator .
         ?original lrm:R3i_is_realised_by / crm:P72_has_language ?olang .
         ?translation lrm:R3i_is_realised_by / crm:P72_has_language ?tlang .
+"""
+        if 'sl' in kwargs and kwargs['sl'] != 'any':
+            query += f"FILTER(?olang = <{kwargs['sl']}>)\n"
 
-        ?translation spatrem:genre ?genre .
-        ?translation lrm:R67i_is_part_of / lrm:R67i_is_part_of ?magazine .
-        ?magazine rdfs:label ?magLabel .
+        if 'tl' in kwargs and kwargs['tl'] != 'any':
+            query += f"FILTER(?tlang = <{kwargs['tl']}>)\n"
+
+        query += "?translation spatrem:genre ?genre .\n"
+        if 'genre' in kwargs and kwargs['genre'] != 'any':
+            query += f"FILTER(?genre = '{kwargs['genre']}')\n"
+
+
+        query += "?translation lrm:R67i_is_part_of / lrm:R67i_is_part_of ?magazine .\n"
+        if 'magazine' in kwargs and kwargs['magazine'] != 'any':
+            query += f"FILTER(?magazine = <{kwargs['magazine']}>)\n"
+
+        query += """?magazine rdfs:label ?magLabel .
         ?magazine dcterms:identifier ?magKey .
         ?translator rdfs:label ?label .
 	?olang rdfs:label ?olangLabel .
         ?tlang rdfs:label ?tlangLabel .
         FILTER(?label != "Anon.")
 """
-
-        if kwargs['magazine'] and kwargs['magazine'] != 'any':
-            query += f"FILTER(?magazine = <{kwargs['magazine']}>)\n"
-
-        if kwargs['gender'] and kwargs['gender'] != 'any':
+        if 'gender' in kwargs and kwargs['gender'] != 'any':
             query += f"""?translator spatrem:gender ?gender .
             FILTER(?gender = '{kwargs['gender']}')
             """
@@ -449,14 +449,14 @@ WHERE {
             query += "OPTIONAL { ?translator spatrem:gender ?gender .}\n"
 
 
-        if kwargs['nationality'] and kwargs['nationality'] != 'any':
+        if 'nationality' in kwargs and kwargs['nationality'] != 'any':
             query += f"""?translator spatrem:nationality ?nationality .
             FILTER(?nationality = '{kwargs['nationality']}')
             """
         else:
             query += "OPTIONAL { ?translator spatrem:nationality ?nationality .}\n"
 
-        if kwargs['language_area'] and kwargs['language_area'] != 'any':
+        if 'language_area' in kwargs and kwargs['language_area'] != 'any':
             query += f"""?translator spatrem:language_area ?language_area .
             FILTER(?language_area = '{kwargs['language_area']}')
             """
@@ -464,15 +464,15 @@ WHERE {
             query += "OPTIONAL { ?translator spatrem:language_area ?language_area .}\n"
 
         if 'year_birth' in kwargs and kwargs['year_birth'] != 'any':
-            query += f"""?translator spatrem:year_birth ?year .
-            FILTER(?year_birth = '{kwargs['year_birth']}')
+            query += f"""?translator spatrem:year_birth ?year_birth .
+            FILTER(?year_birth > '{kwargs['year_birth']}')
             """
         else:
             query += "OPTIONAL { ?translator spatrem:year_birth ?year_birth .}\n"
 
         if 'year_death' in kwargs and kwargs['year_death'] != 'any':
-            query += f"""?translator spatrem:year_death ?year .
-            FILTER(?year_death = '{kwargs['year_death']}')
+            query += f"""?translator spatrem:year_death ?year_death .
+            FILTER(?year_death < '{kwargs['year_death']}')
             """
         else:
             query += "OPTIONAL { ?translator spatrem:year_death ?year_death .}\n"
@@ -485,9 +485,13 @@ WHERE {
         if 'sortby' in kwargs:
             query += f"{kwargs['sortby']} "
 
-        query += " ?label"
+        query += "?label"
+            
+            
         result = self.query(query)
+
         translators = {}
+
         for row in result.data:
             id = row['translator']
             if id not in translators:
