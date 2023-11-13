@@ -530,8 +530,144 @@ WHERE {
         return translators.values()
 
 
+    def tlator2(self, uriref):
+        workq = f"""PREFIX lrm: <http://iflastandards.info/ns/lrm/lrmer/>
+PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX person: <http://spacesoftranslation.org/ns/people/> 
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX spatrem: <http://spacesoftranslation.org/ns/spatrem/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+select distinct ?authorLabel ?olangLabel ?tlangLabel ?magLabel ?genre where {{
+    Filter(?persLabel = 'Alegiani, Conte')
+    ?translation lrm:R16i_was_created_by / crm:P14_carried_out_by person:{uriref} ;
+                     crm:P1_is_identified_by / lrm:R33_has_string ?title ;
+                     lrm:R3i_is_realised_by / crm:P72_has_language ?tlang ;
+                     lrm:R67i_is_part_of / lrm:R67i_is_part_of ?magazine ;
+                     spatrem:genre ?genre .
+    
+    ?original lrm:R68_is_inspiration_for ?translation ;
+    		  lrm:R16i_was_created_by / crm:P14_carried_out_by ?author ;
+    			lrm:R3i_is_realised_by / crm:P72_has_language ?olang .
+    
+
+        ?tlang rdfs:label ?tlangLabel .
+    	?author rdfs:label ?authorLabel .
+    	?person rdfs:label ?persLabel .
+    	?olang rdfs:label ?olangLabel .
+        ?magazine rdfs:label ?magLabel .
+
+       }}"""
+        
+        results = self.query(workq)
+        sl = set()
+        tl = set()
+        authors = set()
+        magazines = set()
+        genres = set()
+
+        for row in results.data:
+            sl.add(row['olangLabel'])
+            tl.add(row['tlangLabel'])
+            authors.add(row['authorLabel'])
+            magazines.add(row['maglabel'])
+            genres.add(row['genre'])
+            
     
     def translator(self, uriref):
+        infoq = f"""PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX lrm: <http://iflastandards.info/ns/lrm/lrmer/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX spatrem: <http://spacesoftranslation.org/ns/spatrem/>
+PREFIX person: <http://spacesoftranslation.org/ns/people/> 
+
+SELECT distinct ?label ?birthDate  ?deathDate ?gender ?nationality ?language_area WHERE {{
+    person:{uriref} rdfs:label ?label . 	
+    OPTIONAL {{ person:{uriref} spatrem:year_birth ?birthDate .}}
+    OPTIONAL {{ person:{uriref} spatrem:year_death ?deathDate .}}
+    OPTIONAL {{ person:{uriref} spatrem:gender ?gender .}}
+    OPTIONAL {{ person:{uriref} spatrem:nationality ?nationality .}}
+    OPTIONAL {{ person:{uriref} spatrem:language_area ?language_area .}}
+}} ORDER BY ?label"""
+
+        worksq = f"""PREFIX lrm: <http://iflastandards.info/ns/lrm/lrmer/>
+PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX person: <http://spacesoftranslation.org/ns/people/> 
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX spatrem: <http://spacesoftranslation.org/ns/spatrem/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+select distinct ?authorLabel ?olangLabel ?tlangLabel ?magLabel ?genre where {{
+    Filter(?persLabel = 'Alegiani, Conte')
+    ?translation lrm:R16i_was_created_by / crm:P14_carried_out_by person:{uriref} ;
+                     crm:P1_is_identified_by / lrm:R33_has_string ?title ;
+                     lrm:R3i_is_realised_by / crm:P72_has_language ?tlang ;
+                     lrm:R67i_is_part_of / lrm:R67i_is_part_of ?magazine ;
+                     spatrem:genre ?genre .
+    
+    ?original lrm:R68_is_inspiration_for ?translation ;
+    		  lrm:R16i_was_created_by / crm:P14_carried_out_by ?author ;
+    			lrm:R3i_is_realised_by / crm:P72_has_language ?olang .
+    
+
+        ?tlang rdfs:label ?tlangLabel .
+    	?author rdfs:label ?authorLabel .
+    	?person rdfs:label ?persLabel .
+    	?olang rdfs:label ?olangLabel .
+        ?magazine rdfs:label ?magLabel .
+
+       }}"""
+
+        namesq = f"""PREFIX lrm: <http://iflastandards.info/ns/lrm/lrmer/>
+        PREFIX person: <http://spacesoftranslation.org/ns/people/> 
+PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+select distinct ?name where {{
+        person:{uriref} crm:P1_is_identified_by / lrm:R33_has_string ?name .
+        }} """
+
+
+        info = self.query(infoq).data[0]
+        works = self.query(worksq).data
+        names = self.query(namesq).data
+
+        sl = set()
+        tl = set()
+        authors = set()
+        magazines = set()
+        genres = set()
+
+        for row in works:
+            sl.add(row['olangLabel'])
+            tl.add(row['tlangLabel'])
+            authors.add(row['authorLabel'])
+            magazines.add(row['magLabel'])
+            genres.add(row['genre'])
+
+
+        data = {"label": info.get("label"),
+                "birthDate" : info.get('birthDate'),
+                "deathDate" : info.get('deathDate'),
+                "gender" : info.get('gender'),
+                "nationality" : info.get('nationality'),
+                "language_area" : info.get('language_area'),
+                "names": [n['name'] for n in names],
+                "source_langs" : [x for x in sl],
+                "target_langs" : [x for x in tl],
+                "authors" : [x for x in authors],
+                "magazines" : [x for x in magazines],
+                "genres" : [x for x in genres],
+                }
+
+        for field in ['birthDate', 'deathDate', 'gender', 'nationality', 'language_area']:
+            if data[field] is None:
+                data[field] = 'unknown'
+
+        
+        return data
+
+#########
+
+    def translatorOld(self, uriref):
         infoq = f"""PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX lrm: <http://iflastandards.info/ns/lrm/lrmer/>
@@ -584,7 +720,7 @@ select distinct * where {{
            dcterms:identifier ?issueId ;
            spatrem:pubDate ?pubDate .
 
-       }} ORDER BY ?title """
+       }} ORDER BY ?pubDate """
 
 
         works = []
@@ -609,7 +745,8 @@ select distinct ?name where {{
         names = [n['name'] for n in self.query(namesq).data]
 
         return { "works": works, "names": names, "info": info }
-        
+
+########
 
     def author(self, uriref):
         worksq = f"""PREFIX lrm: <http://iflastandards.info/ns/lrm/lrmer/>

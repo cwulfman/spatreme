@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
+<section class="hero is-small is-primary">
+  <div class="hero-boday">
+    <p class="title">Translations Published in {{ info.magLabel }} Issue {{ info.number }}, {{ info.pubDate }}</p>
+</section>
 <section class="section">
-  <div class="container">
-    <h1 class="title">Translations Published in {{ info.magLabel }} Issue {{ info.number }}, {{ info.pubDate }}</h1>
     <table class="table">
       <thead>
         <tr>
@@ -27,6 +29,5 @@
         {% endfor %}
       </tbody>
     </table>
-  </div>
 </section>
 {% endblock %}

@@ -4,10 +4,14 @@ sl={{form.sl.data}}&amp;tl={{form.tl.data}}&amp;genre={{form.genre.data}}&amp;af
 {%- endmacro %}
 
 {% block content %}
-<div class="section">
-  <div class="container">
-    <h1 class="title">Translations</h1>
-    
+<section class="hero is-small is-primary">
+  <div class="hero-body">
+    <p class="title">Translations</p>
+    {{ lipsum(n=1) }}
+  </div>
+</section>
+
+<section class="section">
     <div class="columns">
       <div class="column is-one-quarter">
 
@@ -137,7 +141,6 @@ sl={{form.sl.data}}&amp;tl={{form.tl.data}}&amp;genre={{form.genre.data}}&amp;af
         </table>
       </div> <!-- column -->
     </div>   <!-- columns -->
-  </div>     <!-- container -->
-</div>       <!-- section -->
+</section>       <!-- section -->
 {% endblock %}
 

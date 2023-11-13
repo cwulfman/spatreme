@@ -1,10 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
+ <section class="hero is-small is-primary">
+  <div class="hero-body">
+    <p class="title">Magazine {{ info.title }}</p>
+  </div>
+</section>
+
 <section class="section">
-
-    <h1 class="title">Magazine {{ info.title }}</h1>
-
-  <main>
     <table class="table">
       <thead>
         <tr>
@@ -25,6 +27,5 @@
         {% endfor %}
       </tbody>
     </table>
-  </main>
 </section>
 {% endblock %}

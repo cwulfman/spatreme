@@ -1,7 +1,14 @@
-body {
-    background-color: ivory;
+dt,
+dd {
+  display: inline-block;
+  width: calc(50% - 0.5rem);
+  margin: 0;
 }
 
-.resultstable {
-    width: 95%;
+dt {
+  text-align: right;
+}
+
+dt::after {
+  content: ":";
 }

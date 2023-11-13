@@ -348,10 +348,20 @@ def get_translator(request: Request, id:str):
     result = kb.translator(id)
     return templates.TemplateResponse("translator.html",
                                       { "request": request,
-                                        "names": result['names'],
-                                        "works": result['works'],
-                                        "info": result['info'],
+                                        "info": result,
                                        })
+
+
+# @app.get("/translators/{id}", response_class=HTMLResponse)
+# def get_translator(request: Request, id:str):
+
+#     result = kb.translator(id)
+#     return templates.TemplateResponse("translator.html",
+#                                       { "request": request,
+#                                         "names": result['names'],
+#                                         "works": result['works'],
+#                                         "info": result['info'],
+#                                        })
 
 
 

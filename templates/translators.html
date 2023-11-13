@@ -1,8 +1,13 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="section">
-  <div class="container">
-    <h1 class="title">Translators</h1>
+<section class="hero is-small is-primary">
+  <div class="hero-body">
+    <p class="title">Translators</p>
+    {{ lipsum(n=1) }}
+  </div>
+</section>
+
+<section class="section">
     <div class="columns">
       <div class="column is-one-quarter">
         <form method="POST" action="">
@@ -169,7 +174,6 @@
         </table>
       </div>
     </div> <!-- columns -->
-  </div>
-</div>
+</section>
 {% endblock %}
 
