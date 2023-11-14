@@ -59,6 +59,7 @@ async def post_translations(request: Request):
 
     filters = { "sl": form_data.get('sl'),
                 "tl": form_data.get('tl'),
+                "language_area" : form_data.get('language_area'),
                 "genre": form_data.get('genre'),
                 "after_date": form_data.get('after_date'),
                 "before_date":form_data.get('before_date'),
@@ -74,7 +75,8 @@ async def post_translations(request: Request):
         "target_lang_choices" : [(item['lang'], item['label']) for item in kb.target_languages().data],
         "magazine_choices": [(item['magazine'], item['label']) for item in kb.magazines().data],
         "date_choices": [(item['date'], item['date']) for item in kb.dates().data],
-        "genre_choices" : [(item['genre'], item['genre']) for item in kb.genres().data]
+        "genre_choices" : [(item['genre'], item['genre']) for item in kb.genres().data],
+        "language_area_choices" : [(item['language_area'], item['language_area']) for item in kb.language_areas().data],
         }
 
     for _,v in form_data.items():
@@ -98,6 +100,9 @@ async def post_translations(request: Request):
 
     form.before_date.choices = form_data['date_choices']
     form.before_date.data = filters['before_date']
+
+    form.language_area.choices = form_data['language_area_choices']
+    form.language_area.data = filters['language_area']
 
     form.sortby.data = filters['sortby']
 
@@ -122,6 +127,7 @@ async def get_translations(request: Request,
                            page_size: int = 10,
                            sl: Optional[str] = 'any',
                            tl: Optional[str] = 'any',
+                           language_area: Optional[str] = 'any',
                            genre: Optional[str] = 'any',
                            after_date: Optional[int | str] = 'any',
                            before_date: Optional[int | str] = 'any',
@@ -138,6 +144,7 @@ async def get_translations(request: Request,
                 "after_date": after_date,
                 "before_date": before_date,
                 "magazine": magazine,
+                "language_area": language_area,
                 "sortby": sortby,
         }
 
@@ -150,7 +157,7 @@ async def get_translations(request: Request,
         "magazine_choices": [(item['magazine'], item['label']) for item in kb.magazines().data],
         "date_choices": [(item['date'], item['date']) for item in kb.dates().data],
         "genre_choices" : [(item['genre'], item['genre']) for item in kb.genres().data],
-        
+        "language_area_choices" : [(item['language_area'], item['language_area']) for item in kb.language_areas().data],        
         }
 
     for _,v in form_data.items():
@@ -176,6 +183,10 @@ async def get_translations(request: Request,
 
     form.before_date.choices = form_data['date_choices']
     form.before_date.data = filters['before_date']
+
+    form.language_area.choices = form_data['language_area_choices']
+    form.language_area.data = filters['language_area']
+
 
     current_page = page
     prev_page = page - 1

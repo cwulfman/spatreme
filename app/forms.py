@@ -5,6 +5,7 @@ class TranslationForm(StarletteForm):
     genre = SelectField('Genre', default='any')
     sl = SelectField('Source Language', default='any')
     tl = SelectField('Target Language', default='any')
+    language_area = SelectField('Language Area', default='any')
     magazine = SelectField('Magazine', default='any')
     any_date = BooleanField('any date', default=True)
     after_date = SelectField('After Date', default = 'any')

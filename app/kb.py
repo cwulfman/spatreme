@@ -190,6 +190,7 @@ WHERE {{
         ?issue rdfs:label ?issueLabel ;
                dcterms:identifier ?id ;
                spatrem:number ?no ;
+               spatrem:language_area ?language_area;
                spatrem:pubDate ?pubDate .
         OPTIONAL {{ ?issue spatrem:volume ?volume . }}
 
@@ -209,6 +210,7 @@ WHERE {{
                   lrm:R67i_is_part_of ?magazine ;
                   rdfs:label ?issueLabel ;
                   spatrem:number ?issueNo ;
+                  spatrem:language_area ?language_area;
                   spatrem:pubDate ?pubDate .
         OPTIONAL {{ ?issue spatrem:volume ?volume . }}
         ?magazine rdfs:label ?magLabel ;
@@ -355,9 +357,13 @@ select distinct * where {
             q += f"FILTER(xsd:integer(?pubDate) < {kwargs['before_date']})\n"
 
 
-        q += """?translation lrm:R67i_is_part_of ?issue .
-        ?issue lrm:R67i_is_part_of ?magazine .
-        """
+        q += """?translation lrm:R67i_is_part_of ?issue .\n"""
+
+        if 'language_area' in kwargs and kwargs['language_area'] != 'any':
+            q += f"""?issue spatrem:language_area '{kwargs['language_area']}' .\n"""
+
+        q += """?issue lrm:R67i_is_part_of ?magazine ."""
+
 
         if kwargs["magazine"] and kwargs['magazine'] != 'any':
             q += f"FILTER(?magazine = <{kwargs['magazine']}>)\n"
@@ -387,6 +393,8 @@ select distinct * where {
         
         if "limit" in kwargs:
             q += f"LIMIT {kwargs['limit']} "
+
+        breakpoint()
         
         return q
 
