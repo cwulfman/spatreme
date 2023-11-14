@@ -166,11 +166,11 @@ WHERE {{
         issues = []
         for i in self.query(issueq).data:
             issue = {
-                "id" : i['issueId'],
-                "label" : i['issueLabel'],
-                "volume": i['volume'],
-                "number": i['number'],
-                "pubDate" : i['pubDate'],
+                "id" : i.get('issueId'),
+                "label" : i.get('issueLabel'),
+                "volume": i.get('volume'),
+                "number": i.get('number'),
+                "pubDate" : i.get('pubDate'),
             }
             issues.append(issue)
 
@@ -257,13 +257,13 @@ WHERE {{
                   "genre": data['genre'] }
             constituents.append(c)
         result = {}
-        result['info'] = { "label": info["issueLabel"],
-                            "magazine": info["magazine"],
-                            "magLabel": info["magLabel"],
-                            "magId": info["magId"],
-                           "volume": info["volume"],
-                           "number": info["issueNo"],
-                            "pubDate": info["pubDate"]}
+        result['info'] = { "label": info.get("issueLabel"),
+                            "magazine": info.get("magazine"),
+                            "magLabel": info.get("magLabel"),
+                            "magId": info.get("magId"),
+                           "volume": info.get("volume"),
+                           "number": info.get("issueNo"),
+                            "pubDate": info.get("pubDate")}
         result['constituents'] = constituents
         return result
 

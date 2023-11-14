@@ -384,10 +384,12 @@ async def get_magazine_by_key(request: Request, key:str):
 
 @app.get("/issues/{key}", response_class=HTMLResponse)
 async def get_issue_by_key(request: Request, key):
-         result = kb.issue(key)
-         return templates.TemplateResponse("issue.html", { "request": request,
-                                                           "info": result['info'],
-                                                           "constituents": result['constituents']})
+    result = kb.issue(key)
+    return templates.TemplateResponse("issue.html", { "request": request,
+                                                      "info": result['info'],
+                                                      "constituents": result['constituents']})
+
+
 @app.get("/authors/{key}", response_class=HTMLResponse)
 async def get_author_by_key(request: Request, key):
     result = kb.author(key)
