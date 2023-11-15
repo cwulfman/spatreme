@@ -1,0 +1,28 @@
+#+title: Installing GraphDB Free in a Droplet
+#+date: <2023-11-14 Tue>
+
+Warning: this information is for system operators wishing to set up
+their own web-accessible SPARQL endpoint. 
+
+
+Spatrem uses [[https://graphdb.ontotext.com/][Ontotext's GraphDB Free]] product running in a DigtalOcean
+Droplet with 16 GB of memory and a 50 GB disk.
+
+
+    1  apt-get update
+    2  apt-get upgrade
+    4  apt install default-jre
+    5  apt install default-jdk
+   12  apt-get install unzip
+
+   (get the zip file somehow)
+
+   mv graphdb-10.3.3-dist.zip /opt
+   cd /opt
+   unzip graphdb-10.3.3-dist.zip
+   rm graphdb-10.3.3-dist.zip
+   ln -s graphdb-10.3.3 graphdb
+
+
+   /opt/graphdb/bin/graphdb -d
+

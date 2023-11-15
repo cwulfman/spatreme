@@ -1,0 +1,82 @@
+#+title: Spatrem Online
+#+date: <2023-11-14 Tue>
+* Introduction
+Spatrem Online comprises two parts: a parser that transforms the
+Spatrem team's raw data files into knowledge graphs, and a
+table-oriented web application that may be used to explore the
+knowledge graph from a web browser.  This document contains
+instructions for installing and using the tools on a personal
+computer, but the system may be installed and hosted via a web service
+such as Digital Ocean.
+
+Spatrem does not use a traditional relational database to store its
+data, choosing instead to represent the information it has collected
+as RDF knowledge graphs.  These graphs are constructed from data tables
+created by Spatrem's researchers, using
+an [[ https://repository.ifla.org/handle/123456789/2217][international standard ontology]].  Once built, these graphs may be loaded into a
+general-purpose graph database and queried using the SPARQL query
+language.
+
+This repository contains code for a simple web application that may be
+used to explore the information using a tabular representation.
+
+* Prerequisites
+- A Macintosh computer running OS 13 or higher, or a Linux-based
+  computer
+- Some knowledge of "the command line" (i.e., the Bash shell or Zsh)
+  and familiarity with installing software.
+- A graph database engine; Spatrem has used [[https://graphdb.ontotext.com/][GraphDB Free]] 
+
+* Building the Web Application
+Begin by cloning this repository to your computer:
+#+begin_src shell
+  git clone git@github.com:cwulfman/spatreme.git
+#+end_src
+
+This will create a folder called spatreme (a code name for the
+application), but you may name the folder whatever you like.
+
+Switch into this folder, create a Python virtual environment, and
+activate it:
+
+#+begin_src shell
+  cd spatreme
+  python -m venv venv
+  source venv/bin/activate
+#+end_src
+
+Now use the ~pip~ program to install the program's dependencies (you
+should update ~pip~ first):
+
+#+begin_src shell
+  pip install -U pip
+  pip install -r requirements.txt 
+#+end_src
+
+Now you should be able to start the web application:
+#+begin_src shell
+  sh ./spatreme.sh
+#+end_src
+
+* Creating the Knowledge Graphs
+[ Instructions on installing and using the parser to come. ]
+
+- You must build the translation graphs before you build the
+  translator graphs, or they will not link up properly.
+  #+begin_src shell
+    poetry run python process_translations_file.py translations/DE_Translations.csv ~/Desktop/graphs
+    poetry run python process_translators_file.py translators/DE_Translators.csv translations/DE_Translations.csv ~/Desktop/graphs
+  #+end_src
+
+
+* Loading the Graph Database
+Spatrem's graph database is hosted at this address:
+http://147.182.188.37:7200. It is an instance of GraphDB Free, which
+has a very user-friendly Desktop interface that makes it easy to
+update the knowledge graph.
+
+[ Details to come; will teach Marina. ]
+
+
+
+
